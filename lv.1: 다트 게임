@@ -1,0 +1,28 @@
+# https://programmers.co.kr/learn/courses/30/lessons/17682
+# 다트 게임
+
+def solution(dartResult):
+    number_index = 1
+    numbers = [0] * 4
+
+    for index, char in enumerate(dartResult):
+        if char.isnumeric():
+            if char == "0":
+                numbers[number_index] *= 10
+                number_index += 1
+            else:
+                numbers[number_index] = int(char)
+                if not dartResult[index + 1].isnumeric():
+                    number_index += 1
+
+        currentIndex = number_index - 1
+        if char == "D":
+            numbers[currentIndex] **= 2
+        elif char == "T":
+            numbers[currentIndex] **= 3
+        elif char == "*":
+            numbers[currentIndex] *= 2
+            numbers[currentIndex - 1] *= 2
+        elif char == "#":
+            numbers[currentIndex] *= -1
+    return sum(numbers[1:])
