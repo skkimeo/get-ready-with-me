@@ -40,3 +40,87 @@ def solution(n, k, cmd):
             selected = graph[selected][multiplier[direction]]
 
     return "".join(answer)
+
+
+# 링크드리스트
+class Node:
+    def __init__(self, number, prev):
+        self.number = number
+        self.prev = prev
+        self.next = None
+
+
+class LinkedList:
+    def __init__(self, number, k):
+        self.root = Node(0, None)
+        self.selected_node = None
+        self.removed = []
+        node = self.root
+        for index in range(1, number):
+            new_node = Node(index, node)
+            node.next = new_node
+            node = new_node
+            if index == k:
+                self.selected_node = new_node
+
+    def up(self, count):
+        for _ in range(count):
+            if self.selected_node.prev:
+                self.selected_node = self.selected_node.prev
+
+    def down(self, count):
+        for _ in range(count):
+            if self.selected_node.next:
+                self.selected_node = self.selected_node.next
+
+    def clear(self):
+        removed_number = self.selected_node.number
+        self.removed.append(self.selected_node)
+
+        if self.selected_node.prev:
+            self.selected_node.prev.next = self.selected_node.next
+        if self.selected_node.next:
+            self.selected_node.next.prev = self.selected_node.prev
+        if self.selected_node.next:
+            self.selected_node = self.selected_node.next
+        elif self.selected_node.prev:
+            self.selected_node = self.selected_node.prev
+        return removed_number
+
+    def restock(self):
+        node = self.removed.pop()
+        if node.prev:
+            node.prev.next = node
+        if node.next:
+            node.next.prev = node
+
+        return node.number
+
+
+def solution_2(n, k, cmd):
+    ok_mark, x_mark = "O", "X"
+    answer = [ok_mark] * n
+    clear, restock, up, down = "C", "Z", "U", "D"
+
+    linked_list = LinkedList(n, k)
+    for command in cmd:
+        if command[-1] == clear:
+            index = linked_list.clear()
+            answer[index] = x_mark
+            continue
+
+        if command[-1] == restock:
+            index = linked_list.restock()
+            answer[index] = ok_mark
+            continue
+
+        direction, count = command.split()
+        count = int(count)
+        if direction == up:
+            linked_list.up(count)
+            continue
+
+        if direction == down:
+            linked_list.down(count)
+
+    return "".join(answer)
