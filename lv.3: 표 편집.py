@@ -1,31 +1,42 @@
 # https://programmers.co.kr/learn/courses/30/lessons/81303
-import bisect
-import collections
-
 
 def solution(n, k, cmd):
-    graph = [number for number in range(0, n)]
-    removed = []
-    multiplier = {"U": -1, "D": 1}
+    ok_mark, x_mark = "O", "X"
+    answer, removed = [ok_mark] * n, []
+    prev, next = 0, 1
+    selected = k
+    clear, restock, up, down = "C", "Z", "U", "D"
+    multiplier = {up: prev, down: next}
+    graph = [[None, 1]]
+    for number in range(1, n - 1):
+        graph.append([number - 1, number + 1])
+    graph.append([n - 2, None])
 
     for command in cmd:
-        if command[0] == "C":
-            remove = graph.pop(k)
-            removed.append(remove)
-            if graph[-1] < remove:
-                k -= 1
+        if command[-1] == clear:
+            answer[selected] = x_mark
+            leading, trailing = graph[selected][prev], graph[selected][next]
+            removed.append((selected, leading, trailing))
+            if leading is not None:
+                graph[leading][next] = trailing
+                selected = leading
+            if trailing is not None:
+                graph[trailing][prev] = leading
+                selected = trailing
             continue
 
-        if command[0] == "Z":
-            number = removed.pop()
-            index = bisect.bisect_right(graph, number)
-            graph.insert(index, number)
-            if index <= k:
-                k += 1
+        if command[-1] == restock:
+            number, leading, trailing = removed.pop()
+            graph[number] = [leading, trailing]
+            answer[number] = ok_mark
+            if leading is not None:
+                graph[leading][next] = number
+            if trailing is not None:
+                graph[trailing][prev] = number
             continue
 
-        direction, position = command.split()
-        k += int(position) * multiplier[direction]
+        direction, count = command.split()
+        for _ in range(int(count)):
+            selected = graph[selected][multiplier[direction]]
 
-    counter = collections.Counter(graph)
-    return "".join("O" if counter[i] else "X" for i in range(0, n))
+    return "".join(answer)
