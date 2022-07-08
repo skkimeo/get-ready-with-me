@@ -1,0 +1,23 @@
+//https://leetcode.com/problems/contains-duplicate/
+
+import Foundation
+
+class Solution {
+    func containsDuplicate(_ nums: [Int]) -> Bool {
+        var numbers = Set<Int>()
+        
+        for number in nums {
+            guard !numbers.contains(number)
+            else { return true }
+            
+            numbers.insert(number)
+        }
+        
+        return false
+    }
+    
+    func superShort(_ nums: [Int]) -> Bool {
+        Set(nums).count != nums.count
+    }
+
+}

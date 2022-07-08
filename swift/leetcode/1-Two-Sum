@@ -1,0 +1,48 @@
+/** https://leetcode.com/problems/two-sum/
+
+ 1. 정렬해서 투포인터로 풀어야겠다고 생각했는데
+ 2. 답 리턴값이 기존 배열에서의 위치여서 enumerate()을 사용했다
+ 3. 최적 답안은 딕셔너리 쓰는 방식이었음...
+ **/
+
+import Foundation
+
+class Solution {
+    func optimalTwoSum(_ nums: [Int], _ target: Int) -> [Int] {
+        var indices = [Int: Int]()
+        
+        for index in 0..<nums.count {
+            let number = nums[index]
+            let complement = target - number
+            guard let complementIndex = indices[complement]
+            else {
+                indices[number] = index
+                continue
+            }
+            
+            return [index, complementIndex]
+        }
+        
+        return []
+    }
+
+    func twoSum(_ nums: [Int], _ target: Int) -> [Int] {
+        var start = Int.zero
+        var end = nums.count - 1
+        let nums = nums.enumerated().sorted { $0.element < $1.element }
+
+        while start < end {
+            let sum = nums[start].element + nums[end].element
+            guard sum != target
+            else { break }
+
+            if sum < target {
+                start += 1
+            } else {
+                end -= 1
+            }
+        }
+
+        return [nums[start].offset, nums[end].offset]
+    }
+}
