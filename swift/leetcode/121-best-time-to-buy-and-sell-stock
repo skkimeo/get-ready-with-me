@@ -1,0 +1,19 @@
+/**
+https://leetcode.com/problems/best-time-to-buy-and-sell-stock/
+
+ 1. 분기해서 푸는 게 빠르지만...이게 더 짧으니까...ㅎ
+**/
+
+class Solution {
+    func maxProfit(_ prices: [Int]) -> Int {
+        var maxProfit = Int.zero
+        var currentMinPrice = Int.max
+        
+        for price in prices {
+            currentMinPrice = min(price, currentMinPrice)
+            maxProfit = max(price - currentMinPrice, maxProfit)
+        }
+        
+        return maxProfit
+    }
+}
