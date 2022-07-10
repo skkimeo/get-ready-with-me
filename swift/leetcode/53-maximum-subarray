@@ -1,0 +1,22 @@
+/**
+ https://leetcode.com/problems/maximum-subarray/
+ 
+ 1. dp? 그리디? 암튼 직전까지의 최적 결과를 살려서 거기에 현재 숫자를 더하는 경우와 현재 숫자를 새로운 시작점으로 계산하는 경우 2가지를 쭉 비교하면 되는 문제라고 생각했다.
+ 2. 그래서 배열에 쭉 저장해가면서 계산했는데 풀고 나서 다른 답안을 보니까 배열도 필요없고 걍 직전 최대 값만 변수에 저장해서 들고다니면 됐다
+ 3. 슥삭 리팩토링해줌 ㅎ
+ 
+**/
+
+class Solution {
+    func maxSubArray(_ nums: [Int]) -> Int {
+        var currentSum = Int.zero
+        var maxSum = nums.first!
+        
+        for number in nums {
+            currentSum = max(currentSum + number, number)
+            maxSum = max(maxSum, currentSum)
+        }
+        
+        return maxSum
+    }
+}
