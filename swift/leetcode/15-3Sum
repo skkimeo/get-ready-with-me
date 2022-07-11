@@ -1,0 +1,76 @@
+/**
+ https://leetcode.com/problems/3sum/
+ 
+ 1. 첨에 걍 혹시나 하는 맘에 완탐으로 돌렸다가 당연히...^^ 시간 초과 떴다
+ 2. 그래서 시간 좀 줄여볼려고 뭔가 처음 두 숫자만 완탐으로 돌리는 방식이 없을까 하다가 딕셔너리를 써야겠다고 생각했다
+ 3. 1, 2 번째 숫자 합에 -를 붙인 값이 있으면 저장하는 방식
+ 4. 시간 짱 오래걸리는데 통과하긴 함ㅋㅎ
+ 5. 더 나은 풀이는 정렬 + 투포인터를 써서 접근하는 방식!
+ **/
+
+class Solution {
+    func betterAnswer(_ nums: [Int]) -> [[Int]] {
+        let nums = nums.sorted()
+        var answer = [[Int]]()
+        let length = nums.count
+        
+        for index in 0..<length - 2 {
+            guard nums[index] <= .zero
+            else { continue }
+            
+            var left = index + 1
+            var right = length - 1
+            
+            while left < right {
+                let sum = nums[index] + nums[left] + nums[right]
+                
+                if sum < .zero {
+                    left += 1
+                } else if sum > .zero {
+                    right -= 1
+                } else {
+                    answer.append([nums[index], nums[left], nums[right]])
+                    left += 1
+                    right -= 1
+                }
+            }
+        }
+        
+        return Array(Set(answer))
+    }
+    
+    func threeSum(_ nums: [Int]) -> [[Int]] {
+        let length = nums.count
+        var answer = Set<[Int]>()
+        var dictionary: [Int: Int] = {
+            var dict = [Int: Int]()
+            
+            for num in nums {
+                dict[num, default: .zero] += 1
+            }
+            
+            return dict
+        }()
+        
+        for i in 0..<length - 2 {
+            dictionary[nums[i], default: .zero] -= 1
+            
+            for j in i + 1..<length - 1 {
+                dictionary[nums[j], default: .zero] -= 1
+                let k = -(nums[i] + nums[j])
+                
+                guard dictionary[k, default: .zero] > .zero
+                else {
+                    dictionary[nums[j], default: .zero] += 1
+                    continue
+                }
+                answer.insert([nums[i], nums[j], k].sorted())
+                dictionary[nums[j], default: .zero] += 1
+            }
+            
+            dictionary[nums[i], default: .zero] += 1
+        }
+        
+        return Array(answer)
+    }
+}
