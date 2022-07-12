@@ -1,0 +1,31 @@
+/**
+ https://leetcode.com/problems/longest-substring-without-repeating-characters/
+ 
+ 1. 첨에는 생각을 잘못해가지고 걍 중복이 나올때마다 중복 등장 지점을 새로운 시작점으로 해서 다시 부분 문자열을 찾았다
+ 2. 근데 틀렸다면서 dvdf 와 같은 테케를 줬다...
+ 3. 중복이 나왔을 때 시작 시점을 중복 단어가 새로 나타난 지점(d, 2)이 아니라 이전 지점(d, 0)의 다음 자리(v, 1)로 줘야 했던 것임
+ 4. 그래서 이걸 어케 기록할까 하다가 걍 큐에 담고 새로운 문자에 접근할 때마다 큐에 이미 있는지 확인해서 있으면 중복 단어가 처음 나타나는 자리까지 다 deque해버리는 방식으로 중복을 관리하고, 최대 길이는 maxLength 라는 별도의 변수로 관리하면 되겠다고 생각했다.
+ 5. maxLength는 효율성을 위해 중복이 나올때마다 계산하도록 했는데 이러면 중복 없이 문자열이 끝나는 경우 체크되지 않으니까 리턴 값에서도 한 번 더 계산하게 했다
+ 6. 큐는 Swift는 큐가 없으니까...^^ 문자열의 요소가 다 합쳐도 200개가 안될 것 같아서(문제에 영문자, 숫자, 기호, 공백이라고 되어 있었음) 걍 contains랑 remove를 썼다ㅋㅋㅋ
+ 7. 딕셔너리 써서 배열에 위치를 담도록 하면 substring 배열이 커져도 ㄱㅊ을듯?
+ 8. 원래 guard 충이라 guard문으로 제출해서 통과하고 너무 안 이뻐 보여서 if문으로 리팩토링했는데 성능이 엄청 개선됐다...?!고 생각했는데 다시 돌려보니까 걍 랜덤인듯ㅋㅋㅋ
+ **/
+
+class Solution {
+    func lengthOfLongestSubstring(_ s: String) -> Int {
+        var substring = [Character]()
+        var maxLength = Int.zero
+        
+        for character in s {
+            /// 중복이 나오는 경우 초기화 작업
+            if substring.contains(character) {
+                maxLength = max(maxLength, substring.count)
+                let index = substring.firstIndex(of: character)!
+                substring.removeFirst(index + 1)
+            }
+            substring.append(character)
+        }
+        
+        return max(maxLength, substring.count)
+    }
+}
